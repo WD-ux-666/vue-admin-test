@@ -1,18 +1,20 @@
 <template>
     <div class="login-container">
-        <div class="login-box">
+        <el-card class="login-box">
             <h2>用户登录</h2>
-            <div class="form-item">
-                <input v-model="form.username" placeholder="用户名">
-            </div>
-            <div class="form-item">
-                <input v-model="form.password" type="password" placeholder="密码">
-            </div>
-            <button @click="handleLogin" :disabled="loading">
-                {{ loading ?'登录中...':'登录' }}
-            </button> 
+            <el-form :model="form" label-position="top">
+                <el-form-item>
+                    <el-input v-model="form.username" placeholder="用户名" clearable />
+                </el-form-item>
+                <el-form-item>
+                    <el-input v-model="form.password" type="password" placeholder="密码" show-password />
+                </el-form-item>
+                <el-button type="primary" style="width: 100%" :loading="loading" @click="handleLogin">
+                    {{ loading ? '登录中...' : '登录' }}
+                </el-button>
+            </el-form>
             <p class="tip">测试账号：admin/123456</p>
-        </div>
+        </el-card>
     </div>
 </template>
 
@@ -20,6 +22,7 @@
 import { login } from '../api/user';
 import { ref,reactive } from 'vue';
 import { useRouter} from 'vue-router';
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const loading = ref(false)
@@ -42,10 +45,10 @@ const handleLogin = async ()=>{
             localStorage.setItem('token',res.data.token)
             localStorage.setItem('username',res.data.username)
 
-            alert('登录成功')
+            ElMessage.success('登录成功')
             router.push('/user')
         }else{
-            alert(res.msg)
+            ElMessage.error(res.msg)
 
         }
     }finally{
@@ -69,7 +72,7 @@ const handleLogin = async ()=>{
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-    width: 300px;
+    width: 380px;
 }
 .login-box h2{
     text-align: center;
