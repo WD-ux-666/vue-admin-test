@@ -1,13 +1,18 @@
 <template>
     <div>
+        <!--登录退出按钮-->
+        <div class="header">
+            <span>欢迎，{{ username }}</span>
+            <button @click="handleLogout">退出登录</button>
+        </div>
         <h3>用户管理</h3>
-        <!-- 新增/编辑表单 -->
+        
         <div>
             <input v-model="form.name" placeholder="姓名">
             <input v-model.number="form.age" placeholder="年龄">
 
-            <!-- 新增/编辑状态分离：有id=编辑模式，显示保存+取消；无id=新增模式，显示新增按钮 -->
-            <!-- 加 :disabled 绑定 loading，请求中按钮不可点，防止重复提交 -->
+          
+
             <button v-if="form.id" @click="handleUpdate" :disabled="loading">
                 保存修改
             </button>
@@ -15,7 +20,7 @@
                 取消
             </button>
             <button v-else @click="handleAdd" :disabled="loading">
-                <!-- loading 时按钮文字变化，给用户反馈 -->
+
                 {{ loading ? '提交中...' : '新增' }}
             </button>
         </div>
@@ -33,7 +38,25 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { addUser, updateUser, delUser, getUserList } from '../api/user'
+
+const router = useRouter()
+const username = ref(localStorage.getItem('username')||'')
+
+
+//退出登录
+const handleLogout = () =>{
+    if (confirm('确定退出？')){
+        //清除token
+        localStorage.removeItem('token')
+        localStorage.removeItem('username')
+        //跳回登录页
+        router.push('/login')
+    }
+}
+
+
 
 // 列表数据
 const list = ref([])

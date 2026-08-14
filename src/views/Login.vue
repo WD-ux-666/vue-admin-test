@@ -19,7 +19,7 @@
 <script setup>
 import { login } from '../api/user';
 import { ref,reactive } from 'vue';
-import { useReducer } from 'react';
+import { useRouter} from 'vue-router';
 
 const router = useRouter()
 const loading = ref(false)
@@ -63,6 +63,37 @@ const handleLogin = async ()=>{
     align-items: center;
     height: 100vh;
     background: #f5f5f5;
+}
+.login-box{
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    width: 300px;
+}
+.login-box h2{
+    text-align: center;
+    margin-bottom: 20px;
+}
+.form-item{
+    margin-bottom: 15px;
+}
+.form-item input{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.button:disabled{
+    background: #a0cfff;
+    cursor: not-allowed;
+}
+.tip{
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+    margin-top: 15px;
 }
 
 
