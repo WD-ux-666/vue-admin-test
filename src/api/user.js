@@ -1,5 +1,16 @@
 import request from './request'
 
+
+
+//登录接口
+export function login(data){
+    return request({
+        url:'login',
+        method:'post',
+        data
+    })
+}
+
 // 获取用户列表
 export function getUserList(){
     return request({
