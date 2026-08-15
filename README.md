@@ -31,3 +31,5 @@ npm run build
 npm run preview
 ## 配套后端接口服务
 👉 \[test-api-server\](https://github.com/WD-ux-666/test-api-server)
+<img width="2559" height="1527" alt="主页面效果图" src="https://github.com/user-attachments/assets/bbd06978-5c45-4443-b13d-7799b1e3e7e1" />
+<img width="2559" height="1527" alt="登录效果图" src="https://github.com/user-attachments/assets/5615a0d4-cd2a-4686-85cb-d3ad118b2684" />
