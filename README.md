@@ -20,7 +20,8 @@
 6. 标准化打包、预览脚本。
 
 ## 项目截图
-> 待补充：登录页、用户列表、编辑弹窗截图
+<img width="2559" height="1527" alt="主页面效果图" src="https://github.com/user-attachments/assets/bbd06978-5c45-4443-b13d-7799b1e3e7e1" />
+<img width="2559" height="1527" alt="登录效果图" src="https://github.com/user-attachments/assets/5615a0d4-cd2a-4686-85cb-d3ad118b2684" />
 
 ## 快速启动
 ```bash
