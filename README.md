@@ -17,7 +17,8 @@
 3. 集成 Element Plus 组件库，提供表单、表格、弹窗、消息提示等交互；
 4. 登录后自动携带 JWT Token，接口 401 自动跳转登录页；
 5. 路由守卫拦截未登录访问，支持退出登录；
-6. 标准化打包、预览脚本。
+6. 用户列表支持分页（el-pagination），可按 ID 查询单个用户；
+7. 标准化打包、预览脚本。
 
 ## 项目截图
 <img width="2559" height="1527" alt="主页面效果图" src="https://github.com/user-attachments/assets/bbd06978-5c45-4443-b13d-7799b1e3e7e1" />
