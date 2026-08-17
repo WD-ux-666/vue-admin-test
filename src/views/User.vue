@@ -11,8 +11,13 @@
             <template #header>
                 <div class="card-header">
                     <span>用户管理</span>
-                    <!-- 新增入口：重置表单并打开弹窗 -->
-                    <el-button type="primary" @click="handleAdd">新增用户</el-button>
+                    <!-- 按ID查询单个用户 + 新增入口 -->
+                    <div>
+                        <el-input v-model="searchId" placeholder="输入ID查询" style="width: 160px; margin-right: 8px" clearable />
+                        <el-button type="primary" @click="handleSearchById">查询</el-button>
+                        <el-button @click="resetSearch">重置</el-button>
+                        <el-button type="primary" @click="handleAdd">新增用户</el-button>
+                    </div>
                 </div>
             </template>
 
@@ -29,6 +34,18 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <!-- 分页器：total 总数，current-page 当前页，page-size 每页条数，翻页/改条数都重新加载 -->
+             <el-pagination
+                background
+                layout="total,prev,pager,next,sizes,jumper"
+                :total="total"
+                v-model:current-page="page"
+                v-model:page-size="pageSize"
+                :page-sizes="[5,10,20,50]"
+                @current-change="getList"
+                @size-change ="handleSizeChange"
+                style="margin-top: 16px; justify-content: flex-end;"
+            />
         </el-card>
 
         <!-- 新增/编辑弹窗：form.id 有值=编辑模式，无值=新增模式（原注释：状态分离，有id显示保存+取消，无id显示新增） -->
@@ -56,7 +73,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { addUser, updateUser, delUser, getUserList } from '../api/user'
+import { addUser, updateUser, delUser, getUserList, getUserById } from '../api/user'
 
 const router = useRouter()
 const username = ref(localStorage.getItem('username') || '')
@@ -94,12 +111,43 @@ const loading = ref(false)
 // dialogVisible：控制新增/编辑弹窗的显示与隐藏
 const dialogVisible = ref(false)
 
+// 分页状态：page 当前页码，pageSize 每页条数，total 总条数
+const page = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+
+// 搜索状态：按ID查询单个用户
+const searchId = ref('')
+
+// 按ID查询：查到就显示在表格里（单条），查不到提示
+const handleSearchById = async () => {
+    if (!searchId.value.trim()) {
+        ElMessage.warning('请输入要查询的ID')
+        return
+    }
+    const res = await getUserById(searchId.value)
+    if (res.code === 200) {
+        list.value = [res.data]   // 单对象包成数组喂给表格
+        total.value = 1
+    } else if (res.code === 404) {
+        ElMessage.warning(res.msg)  // '用户不存在'
+    }
+}
+
+// 重置：回到分页列表
+const resetSearch = () => {
+    searchId.value = ''
+    page.value = 1
+    getList()
+}
+
 // 加载列表
 const getList = async () => {
     try {
-        const res = await getUserList()
+        const res = await getUserList(page.value, pageSize.value)
         if (res.code === 200) {
-            list.value = res.data
+            list.value = res.data.list
+            total.value = res.data.total
         }
     } catch (err) {
         // 401 已由响应拦截器统一跳转登录页，这里只兜底其它错误，避免未处理的 Promise 异常
@@ -107,6 +155,12 @@ const getList = async () => {
             ElMessage.error(err.response?.data?.msg || '列表加载失败')
         }
     }
+}
+
+//每页条数变化：重置回第1页再刷新
+const handleSizeChange = ()=>{
+    page.value = 1
+    getList()
 }
 
 // 公共重置表单方法：新增成功和修改成功都要重置表单，抽出来避免重复代码
@@ -166,6 +220,9 @@ const handleDel = async (id) => {
 
     const res = await delUser(id)
     ElMessage.success(res.msg)
+    if (list.value.length === 1 && page.value > 1){
+        page.value--
+    }
     getList()
 }
 

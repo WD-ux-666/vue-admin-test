@@ -11,10 +11,23 @@ export function login(data){
     })
 }
 
-// 获取用户列表
-export function getUserList(){
+
+// 获取用户列表（分页）
+export function getUserList(page = 1, pageSize = 10){
     return request({
         url:'/user/list',
+        method:'get',
+        params:{
+            page,
+            pageSize
+        }
+    })
+}
+
+// 按ID查询单个用户
+export function getUserById(id){
+    return request({
+        url:`/user/detail/${id}`,
         method:'get'
     })
 }
