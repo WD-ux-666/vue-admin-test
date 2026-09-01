@@ -1,5 +1,3 @@
-<img width="2559" height="1527" alt="管理员" src="https://github.com/user-attachments/assets/9dcda60d-5729-4881-b965-88fdbc1fab70" /># Vue3 用户管理系统前端
-
 ## 项目简介
 基于 Vite + Vue3 开发的简易后台管理页面，对接 Node.js + MySQL 后端接口，实现用户登录鉴权与数据增删改查全套功能。
 
