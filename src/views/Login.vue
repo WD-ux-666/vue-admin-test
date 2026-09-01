@@ -44,6 +44,7 @@ const handleLogin = async ()=>{
         if (res.code === 200){
             localStorage.setItem('token',res.data.token)
             localStorage.setItem('username',res.data.username)
+            localStorage.setItem('role',res.data.role)
 
             ElMessage.success('登录成功')
             router.push('/user')

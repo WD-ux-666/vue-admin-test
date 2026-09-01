@@ -16,7 +16,7 @@
                         <el-input v-model="searchId" placeholder="输入ID查询" style="width: 160px; margin-right: 8px" clearable />
                         <el-button type="primary" @click="handleSearchById">查询</el-button>
                         <el-button @click="resetSearch">重置</el-button>
-                        <el-button type="primary" @click="handleAdd">新增用户</el-button>
+                        <el-button v-if="role==='admin'" type="primary" @click="handleAdd">新增用户</el-button>
                     </div>
                 </div>
             </template>
@@ -28,7 +28,7 @@
                 <el-table-column prop="age" label="年龄" width="100" />
                 <el-table-column prop="create_time" label="创建时间" />
                 <el-table-column label="操作" width="160">
-                    <template #default="{ row }">
+                    <template v-if="role==='admin'" #default="{ row }">
                         <el-button size="small" @click="handleEdit(row)">编辑</el-button>
                         <el-button size="small" type="danger" @click="handleDel(row.id)">删除</el-button>
                     </template>
@@ -77,6 +77,7 @@ import { addUser, updateUser, delUser, getUserList, getUserById } from '../api/u
 
 const router = useRouter()
 const username = ref(localStorage.getItem('username') || '')
+const role = ref(localStorage.getItem('role') || '')
 
 // 退出登录：二次确认后清除token并跳回登录页
 const handleLogout = async () => {
