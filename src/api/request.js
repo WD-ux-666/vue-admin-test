@@ -1,3 +1,4 @@
+import { ElMessage } from "element-plus";
 import axios from "axios";
 
 
@@ -22,8 +23,10 @@ server.interceptors.response.use(res =>{
     if(err.response?.status === 401){
         localStorage.removeItem('token')
         localStorage.removeItem('username')
-
         window.location.href ='/login'
+    }
+    if(err.response?.status === 403){
+        ElMessage.error(err.response?.data?.msg || '权限不足')
     }
     console.log('请求失败',err);
     return Promise.reject(err)

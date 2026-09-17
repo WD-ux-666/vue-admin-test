@@ -21,10 +21,11 @@
 <script setup>
 import { login } from '../api/user';
 import { ref,reactive } from 'vue';
-import { useRouter} from 'vue-router';
+import { useRouter,useRoute} from 'vue-router';
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
+const route = useRoute()
 const loading = ref(false)
 
 const form = reactive({
@@ -34,7 +35,7 @@ const form = reactive({
 
 const handleLogin = async ()=>{
     if (!form.username || !form.password){
-        alert('请填写用户名和密码')
+        ElMessage.warning('请填写用户名和密码')
         return
     }
 
@@ -47,7 +48,7 @@ const handleLogin = async ()=>{
             localStorage.setItem('role',res.data.role)
 
             ElMessage.success('登录成功')
-            router.push('/user')
+            router.push(route.query.redirect || '/user')
         }else{
             ElMessage.error(res.msg)
 
@@ -78,20 +79,6 @@ const handleLogin = async ()=>{
 .login-box h2{
     text-align: center;
     margin-bottom: 20px;
-}
-.form-item{
-    margin-bottom: 15px;
-}
-.form-item input{
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-.button:disabled{
-    background: #a0cfff;
-    cursor: not-allowed;
 }
 .tip{
     text-align: center;

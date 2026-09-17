@@ -1,11 +1,5 @@
 <template>
     <div class="page">
-        <!--登录退出按钮-->
-        <div class="header">
-            <span>欢迎，{{ username }}</span>
-            <el-button type="danger" plain size="small" @click="handleLogout">退出登录</el-button>
-        </div>
-
         <!-- 用户列表 -->
         <el-card>
             <template #header>
@@ -71,30 +65,10 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { addUser, updateUser, delUser, getUserList, getUserById } from '../api/user'
 
-const router = useRouter()
-const username = ref(localStorage.getItem('username') || '')
 const role = ref(localStorage.getItem('role') || '')
-
-// 退出登录：二次确认后清除token并跳回登录页
-const handleLogout = async () => {
-    // 二次确认：ElMessageBox 点确定返回 true，取消/关闭返回 false（catch 兜住 reject）
-    const confirmed = await ElMessageBox.confirm('确定退出登录吗？', '提示', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-    }).catch(() => false)
-    if (!confirmed) return
-
-    //清除token和用户名
-    localStorage.removeItem('token')
-    localStorage.removeItem('username')
-    //跳回登录页
-    router.push('/login')
-}
 
 // 列表数据
 const list = ref([])
@@ -236,14 +210,6 @@ onMounted(() => {
 /* 页面整体布局 */
 .page {
     padding: 20px;
-    max-width: 900px;
-    margin: 0 auto;
-}
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
 }
 .card-header {
     display: flex;
