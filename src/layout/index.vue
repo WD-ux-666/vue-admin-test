@@ -52,6 +52,7 @@
 import { ref,computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { User } from '@element-plus/icons-vue';
+import { ElMessageBox } from 'element-plus';
 
 const route = useRoute()
 const router = useRouter()
@@ -66,12 +67,19 @@ const pageTitle = computed(() =>{
     return map[route.path] || '首页'
 })
 
-const handleLogout = () =>{
-    if (confirm('确定要退出登录吗？')){
-        localStorage.removeItem('token')
-        localStorage.removeItem('username')
-        router.push('/login')
-    }
+const handleLogout = async () =>{
+    // 二次确认：ElMessageBox 点确定返回 true，取消/关闭返回 false（catch 兜住 reject）
+    const confirmed = await ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+    }).catch(() => false)
+    if (!confirmed) return
+
+    localStorage.removeItem('token')
+    localStorage.removeItem('username')
+    localStorage.removeItem('role')
+    router.push('/login')
 }
 </script>
 

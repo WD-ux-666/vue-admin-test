@@ -23,7 +23,10 @@ server.interceptors.response.use(res =>{
     if(err.response?.status === 401){
         localStorage.removeItem('token')
         localStorage.removeItem('username')
-        window.location.href ='/login'
+        localStorage.removeItem('role')
+        // 带上当前路径，登录后能跳回原页面（与路由守卫的 redirect 约定保持一致）
+        const redirect = encodeURIComponent(window.location.pathname + window.location.search)
+        window.location.href = `/login?redirect=${redirect}`
     }
     if(err.response?.status === 403){
         ElMessage.error(err.response?.data?.msg || '权限不足')

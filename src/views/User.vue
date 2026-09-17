@@ -21,8 +21,9 @@
                 <el-table-column prop="name" label="姓名" />
                 <el-table-column prop="age" label="年龄" width="100" />
                 <el-table-column prop="create_time" label="创建时间" />
-                <el-table-column label="操作" width="160">
-                    <template v-if="role==='admin'" #default="{ row }">
+                <!-- 非管理员直接不渲染整列，避免留一个 160px 的空列 -->
+                <el-table-column v-if="role === 'admin'" label="操作" width="160">
+                    <template #default="{ row }">
                         <el-button size="small" @click="handleEdit(row)">编辑</el-button>
                         <el-button size="small" type="danger" @click="handleDel(row.id)">删除</el-button>
                     </template>
@@ -177,6 +178,10 @@ const handleSubmit = async () => {
         dialogVisible.value = false
         getList()
         resetForm()
+    } catch (err) {
+        // 401/403 已由响应拦截器统一提示，这里只兜底，避免未捕获的 Promise 异常
+        // 弹窗保持打开，用户可修正后重试
+        console.error(err)
     } finally {
         // finally 确保不管成功失败 loading 都会重置，不用写两遍 loading.value = false
         loading.value = false
@@ -193,12 +198,17 @@ const handleDel = async (id) => {
     }).catch(() => false)
     if (!confirmed) return
 
-    const res = await delUser(id)
-    ElMessage.success(res.msg)
-    if (list.value.length === 1 && page.value > 1){
-        page.value--
+    try {
+        const res = await delUser(id)
+        ElMessage.success(res.msg)
+        if (list.value.length === 1 && page.value > 1) {
+            page.value--
+        }
+        getList()
+    } catch (err) {
+        // 401/403 已由响应拦截器统一提示，这里只兜底，避免未捕获的 Promise 异常
+        console.error(err)
     }
-    getList()
 }
 
 onMounted(() => {
