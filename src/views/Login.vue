@@ -22,7 +22,6 @@
 import { login } from '../api/user';
 import { ref,reactive } from 'vue';
 import { useRouter,useRoute} from 'vue-router';
-import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()

@@ -52,7 +52,6 @@
 import { ref,computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { User } from '@element-plus/icons-vue';
-import { ElMessageBox } from 'element-plus';
 
 const route = useRoute()
 const router = useRouter()

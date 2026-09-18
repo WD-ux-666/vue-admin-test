@@ -66,7 +66,6 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { addUser, updateUser, delUser, getUserList, getUserById } from '../api/user'
 
 const role = ref(localStorage.getItem('role') || '')

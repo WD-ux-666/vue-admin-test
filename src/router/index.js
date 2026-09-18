@@ -1,7 +1,10 @@
 import{createRouter,createWebHistory} from 'vue-router'
-import User from '../views/User.vue'
-import Login from '../views/Login.vue'
-import Layout from '../layout/index.vue'
+
+// 路由懒加载：首屏只加载当前页面需要的代码，其它页面按需请求
+// Vite 会自动把每个动态 import 拆成独立 chunk
+const Login = () => import('../views/Login.vue')
+const Layout = () => import('../layout/index.vue')
+const User = () => import('../views/User.vue')
 
 const routes =[
     {
