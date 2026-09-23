@@ -20,9 +20,13 @@ server.interceptors.response.use(res =>{
     return res.data
 },err =>{
     if(err.response?.status === 401){
+        // RBAC：401 时连 5 个 key 一起清，和 Layout 退出登录保持一致
+        // 不清干净会导致：token 失效但 roleKey/menus 还在，下次登录前侧边栏还能看到旧菜单
         localStorage.removeItem('token')
         localStorage.removeItem('username')
-        localStorage.removeItem('role')
+        localStorage.removeItem('roleKey')
+        localStorage.removeItem('roleName')
+        localStorage.removeItem('menus')
         // 带上当前路径，登录后能跳回原页面（与路由守卫的 redirect 约定保持一致）
         const redirect = encodeURIComponent(window.location.pathname + window.location.search)
         window.location.href = `/login?redirect=${redirect}`

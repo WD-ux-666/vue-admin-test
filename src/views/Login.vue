@@ -44,7 +44,13 @@ const handleLogin = async ()=>{
         if (res.code === 200){
             localStorage.setItem('token',res.data.token)
             localStorage.setItem('username',res.data.username)
-            localStorage.setItem('role',res.data.role)
+            // RBAC：把后端登录响应里的角色信息全部存本地，供 Layout 动态渲染侧边栏 + 前端按钮级权限判断
+            // roleKey：代码里做权限判断用（如 roleKey==='admin'）
+            // roleName：顶栏显示"欢迎，admin（管理员）"用
+            // menus：JSON 数组，如 ['user','role']，Layout 用它过滤侧边栏可见项
+            localStorage.setItem('roleKey',res.data.roleKey)
+            localStorage.setItem('roleName',res.data.roleName)
+            localStorage.setItem('menus',JSON.stringify(res.data.menus || []))
 
             ElMessage.success('登录成功')
             router.push(route.query.redirect || '/user')

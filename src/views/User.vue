@@ -10,7 +10,7 @@
                         <el-input v-model="searchId" placeholder="输入ID查询" style="width: 160px; margin-right: 8px" clearable />
                         <el-button type="primary" @click="handleSearchById">查询</el-button>
                         <el-button @click="resetSearch">重置</el-button>
-                        <el-button v-if="role==='admin'" type="primary" @click="handleAdd">新增用户</el-button>
+                        <el-button v-if="roleKey==='admin'" type="primary" @click="handleAdd">新增用户</el-button>
                     </div>
                 </div>
             </template>
@@ -20,9 +20,12 @@
                 <el-table-column prop="id" label="ID" width="80" />
                 <el-table-column prop="name" label="姓名" />
                 <el-table-column prop="age" label="年龄" width="100" />
+                <!-- RBAC：新增的角色列，role_name 来自后端 list 接口 JOIN role 表带出 -->
+                <el-table-column prop="role_name" label="角色" width="120" />
                 <el-table-column prop="create_time" label="创建时间" />
                 <!-- 非管理员直接不渲染整列，避免留一个 160px 的空列 -->
-                <el-table-column v-if="role === 'admin'" label="操作" width="160">
+                <!-- RBAC：判断从 role 改成 roleKey，对应后端登录响应字段 -->
+                <el-table-column v-if="roleKey === 'admin'" label="操作" width="160">
                     <template #default="{ row }">
                         <el-button size="small" @click="handleEdit(row)">编辑</el-button>
                         <el-button size="small" type="danger" @click="handleDel(row.id)">删除</el-button>
@@ -50,7 +53,19 @@
                     <el-input v-model="form.name" placeholder="请输入姓名" />
                 </el-form-item>
                 <el-form-item label="年龄">
-                    <el-input v-model.number="form.age" placeholder="请输入年龄" />
+                    <el-input v-model="form.age" placeholder="请输入年龄" />
+                </el-form-item>
+                <!-- RBAC：新增/编辑时选角色，下拉选项来自 onMounted 里拉的 roleList -->
+                <!-- 用 r.id 作为 value，r.role_name 作为 label，提交时把 roleId 发给后端 -->
+                <el-form-item label="角色">
+                    <el-select v-model="form.roleId" placeholder="请选择角色" style="width: 100%">
+                        <el-option
+                            v-for="r in roleList"
+                            :key="r.id"
+                            :label="r.role_name"
+                            :value="r.id"
+                        />
+                    </el-select>
                 </el-form-item>
             </el-form>
             <!-- 取消关闭弹窗；确定按钮 :loading 绑定 loading，请求中不可点，防止重复提交 -->
@@ -67,16 +82,25 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { addUser, updateUser, delUser, getUserList, getUserById } from '../api/user'
+// RBAC：引入角色列表接口，供弹窗下拉用
+import { getRoleList } from '../api/role'
 
-const role = ref(localStorage.getItem('role') || '')
+// RBAC：权限判断从原来的 role 改成 roleKey
+// 旧的 localStorage 'role' 已废弃，新登录会存 'roleKey'，对应后端 role_key 字段
+const roleKey = ref(localStorage.getItem('roleKey') || '')
 
 // 列表数据
 const list = ref([])
 
+// RBAC：角色下拉选项，onMounted 时从后端拉取
+const roleList = ref([])
+
 // form 用 reactive：ref 适合基本类型，reactive 适合对象类型
+// RBAC：form 增加 roleId 字段，新增/编辑时一并提交给后端
 const form = reactive({
     name: '',
     age: '',
+    roleId: null,
     id: null
 })
 
@@ -139,9 +163,11 @@ const handleSizeChange = ()=>{
 }
 
 // 公共重置表单方法：新增成功和修改成功都要重置表单，抽出来避免重复代码
+// RBAC：重置时连 roleId 一起清空，避免上次编辑的角色残留到下次新增
 const resetForm = () => {
     form.name = ''
     form.age = ''
+    form.roleId = null
     form.id = null
 }
 
@@ -212,6 +238,11 @@ const handleDel = async (id) => {
 
 onMounted(() => {
     getList()
+    // RBAC：进页面时拉一次角色列表，供新增/编辑弹窗的角色下拉用
+    // 这里没用 await 而用 then，是为了让它和 getList 并行，不阻塞列表加载
+    getRoleList().then(res => {
+        if (res.code === 200) roleList.value = res.data
+    })
 })
 </script>
 

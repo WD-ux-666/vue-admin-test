@@ -5,6 +5,8 @@ import{createRouter,createWebHistory} from 'vue-router'
 const Login = () => import('../views/Login.vue')
 const Layout = () => import('../layout/index.vue')
 const User = () => import('../views/User.vue')
+// RBAC：新增 Role.vue 懒加载，配合下面的 /role 路由使用
+const Role = () => import('../views/Role.vue')
 
 const routes =[
     {
@@ -20,7 +22,17 @@ const routes =[
             {
                 path:'user',
                 name:'user',
-                component:User
+                component:User,
+                // RBAC：meta.menuKey 和后端返回的 menus 数组元素对应，Layout 用它做过滤匹配
+                // meta.title 给 Layout 顶栏显示当前页面标题用
+                meta:{ menuKey:'user', title:'用户管理' }
+            },
+            {
+                // RBAC：新增的角色管理路由，侧边栏会按用户 menus 动态显示
+                path:'role',
+                name:'role',
+                component:Role,
+                meta:{ menuKey:'role', title:'角色管理' }
             }
         ]
     }
