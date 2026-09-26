@@ -11,6 +11,14 @@ export function login(data){
     })
 }
 
+export function register(data){
+    return request({
+        url:'/register',
+        method:'post',
+        data
+    })
+}
+
 
 // 获取用户列表（分页）
 export function getUserList(page = 1, pageSize = 10){
