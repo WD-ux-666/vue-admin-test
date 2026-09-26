@@ -1,5 +1,5 @@
 # ===== 阶段1：构建阶段，用 node 镜像跑 npm run build =====
-FROM node:18-slim AS builder
+FROM node:22 AS builder
 
 WORKDIR /app
 
